@@ -1,5 +1,6 @@
 import pygame
 from asteroidfield import *
+import random
 from constants import *
 from player import *
 from asteroid import *
@@ -27,7 +28,7 @@ def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-        
+
             screen.fill((0, 0, 0))
             for item in drawable:
                 item.draw(screen)
@@ -35,9 +36,20 @@ def main():
             dt = clock_variable.tick(60) / 1000
             updatable.update(dt)
             for asteroid in asteroids:
-                 if asteroid.collision(player) == True:
-                      print("Game Over!")
-                      running = False
+                if asteroid.collision(player) == True:
+                    print("Game Over!")
+                    running = False
+                for bullet in shots:
+                    if asteroid.collision(bullet) == True:
+                        updatable.remove(bullet)
+                        drawable.remove(bullet)
+                        shots.remove(bullet)
+                        print("about to split")
+                        new_asteroids = asteroid.split()
+                        if new_asteroids:
+                            updatable.add(new_asteroids)
+                            drawable.add(new_asteroids)
+                            asteroids.add(new_asteroids)
         pygame.quit()
 
 if __name__ == "__main__":
